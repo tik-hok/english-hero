@@ -225,7 +225,7 @@ function speak(text,r){
     u.lang='en-US'; if(voice) u.voice=voice; u.rate=r||rate; u.pitch=1.05;
     u.onend=res; u.onerror=res;
     speechSynthesis.speak(u);
-    setTimeout(res, 8000);
+    setTimeout(res, Math.min(8000, 1500+text.length*130/(r||rate)));   // 語音卡住也不會讓遊戲停太久
   });
 }
 const SLOW=()=>Math.max(.5,rate-.3);
