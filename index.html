@@ -256,10 +256,13 @@ function resize(){fx.width=innerWidth;fx.height=innerHeight} addEventListener('r
 function confetti(n=120){
   const cols=['#ff7a59','#ffc93c','#2fbf71','#4aa8ff','#9b6bff','#ff6fb5'];
   const start=!parts.length;
-  for(let i=0;i<n;i++) parts.push({x:innerWidth/2,y:innerHeight*.4,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,r:Math.random()*6+4,c:pick(cols),a:Math.random()*6,life:120});
+  const end=performance.now()+2500;   // 用時間控制，背景分頁或連續觸發都不會堆積
+  for(let i=0;i<n;i++) parts.push({x:innerWidth/2,y:innerHeight*.4,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,r:Math.random()*6+4,c:pick(cols),a:Math.random()*6,life:120,end});
+  if(parts.length>300) parts=parts.slice(-300);
   if(start) requestAnimationFrame(loop);
 }
 function loop(){
+  const now=performance.now(); parts=parts.filter(p=>p.end>now);
   fctx.clearRect(0,0,fx.width,fx.height);
   parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.35;p.vx*=.99;p.a+=.2;p.life--;
     fctx.save();fctx.translate(p.x,p.y);fctx.rotate(p.a);fctx.fillStyle=p.c;fctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6);fctx.restore();});
