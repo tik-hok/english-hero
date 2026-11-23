@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英語小勇士 English Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff8e7; --card:#ffffff; --ink:#3b2f4a; --muted:#7a6f86;
+  --pri:#ff7a59; --pri-d:#e85d3c; --ok:#2fbf71; --bad:#ef4f5f; --sky:#4aa8ff; --sun:#ffc93c; --grape:#9b6bff;
+  --shadow:0 6px 0 rgba(59,47,74,.15);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  background-image:radial-gradient(circle at 10% 10%,#ffe9b8 0 60px,transparent 61px),radial-gradient(circle at 90% 30%,#d9f0ff 0 80px,transparent 81px),radial-gradient(circle at 20% 90%,#ffe0ef 0 70px,transparent 71px);
+  background-attachment:fixed;
+  color:var(--ink);font-family:"Baloo 2","Noto Sans TC",system-ui,sans-serif;min-height:100vh;
+}
+#app{max-width:860px;margin:0 auto;padding:16px 16px 40px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.logo{font-weight:800;font-size:clamp(22px,5vw,32px);line-height:1.1}
+.logo small{display:block;font-size:.5em;color:var(--muted);font-weight:700}
+.starbox{background:var(--card);border-radius:999px;padding:6px 14px;font-weight:800;font-size:20px;box-shadow:var(--shadow);white-space:nowrap}
+.btn{border:0;cursor:pointer;font:inherit;font-weight:800;border-radius:18px;padding:12px 20px;font-size:20px;background:var(--pri);color:#fff;box-shadow:0 5px 0 var(--pri-d);transition:transform .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--pri-d)}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:0 5px 0 #d8cfe2}
+.btn.sky{background:var(--sky);box-shadow:0 5px 0 #2f84d1}
+.btn.ok{background:var(--ok);box-shadow:0 5px 0 #1f9454}
+.btn.small{font-size:16px;padding:8px 14px;border-radius:14px}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.mascot{display:flex;align-items:flex-end;gap:10px;margin:8px 0 16px}
+.mascot .face{font-size:56px;line-height:1;animation:bob 2s ease-in-out infinite}
+.bubble{background:#fff;border-radius:20px;padding:10px 16px;box-shadow:var(--shadow);position:relative;font-size:18px;font-weight:700}
+.bubble:before{content:"";position:absolute;left:-10px;bottom:14px;border:10px solid transparent;border-right-color:#fff;border-left:0}
+@keyframes bob{50%{transform:translateY(-6px)}}
+h2{margin:6px 0 12px;font-size:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.tile{background:var(--card);border-radius:24px;padding:16px 10px;text-align:center;cursor:pointer;box-shadow:var(--shadow);border:4px solid transparent;transition:transform .1s;user-select:none}
+.tile:hover{transform:translateY(-3px)}
+.tile .em{font-size:52px;line-height:1.2}
+.tile .t1{font-weight:800;font-size:20px}
+.tile .t2{color:var(--muted);font-size:15px;font-weight:700}
+.modes .tile{display:flex;align-items:center;gap:14px;text-align:left;padding:16px}
+.modes .tile .em{font-size:44px}
+.modes{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.progress{flex:1;height:16px;background:#fff;border-radius:99px;overflow:hidden;box-shadow:inset 0 2px 0 rgba(0,0,0,.06)}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--sun),var(--pri));border-radius:99px;transition:width .4s}
+.stage{background:var(--card);border-radius:28px;box-shadow:var(--shadow);padding:22px 18px;text-align:center}
+.big-em{font-size:clamp(96px,26vw,150px);line-height:1.1;cursor:pointer;user-select:none;display:inline-block}
+.big-em.pop{animation:pop .4s}
+.num{font-weight:800;color:var(--sky);font-family:"Baloo 2",sans-serif}
+@keyframes pop{40%{transform:scale(1.2) rotate(-6deg)}}
+.word{font-size:clamp(38px,10vw,56px);font-weight:800;letter-spacing:1px;margin:4px 0 0}
+.zh{font-size:22px;color:var(--muted);font-weight:700}
+.sentence{font-size:clamp(26px,6.5vw,38px);font-weight:800;line-height:1.35;margin:10px 0}
+.sentence span{display:inline-block;padding:0 4px;border-radius:10px;transition:background .3s}
+.sentence span.hit{background:#c9f5dc;color:#137a43}
+.sentence span.miss{background:#ffd9dd;color:#b42332}
+.qa{background:#f4efff;border-radius:18px;padding:10px 14px;margin:12px auto 0;max-width:520px;text-align:left;font-size:19px;font-weight:700;cursor:pointer}
+.qa div{margin:2px 0}
+.qa .q{color:var(--grape)}
+.tips{background:#fff3cd;border-radius:18px;padding:10px 14px;margin:14px auto 0;max-width:560px;text-align:left;font-size:16px;font-weight:700;line-height:1.5}
+.tips b{color:#b06b00}
+.row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}
+.opt{background:#fff8ef;border-radius:22px;font-size:64px;padding:12px 0;cursor:pointer;border:4px solid #f0e3d0;user-select:none;transition:transform .1s}
+.opt:hover{transform:scale(1.03)}
+.opt.right{background:#d8f8e6;border-color:var(--ok);animation:pop .4s}
+.opt.wrong{background:#ffe1e4;border-color:var(--bad);animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.mic{width:110px;height:110px;border-radius:50%;border:0;font-size:52px;cursor:pointer;background:var(--grape);color:#fff;box-shadow:0 6px 0 #6f45d1;position:relative}
+.mic:active{transform:translateY(4px);box-shadow:0 2px 0 #6f45d1}
+.mic.on{background:var(--bad);box-shadow:0 6px 0 #b42332}
+.mic.on:after{content:"";position:absolute;inset:-10px;border-radius:50%;border:5px solid var(--bad);animation:ring 1s infinite}
+@keyframes ring{from{opacity:1;transform:scale(.9)}to{opacity:0;transform:scale(1.35)}}
+.miclabel{font-weight:800;margin-top:10px;font-size:18px}
+.feedback{min-height:64px;margin-top:14px;font-size:22px;font-weight:800}
+.feedback .heard{display:block;font-size:16px;color:var(--muted);font-weight:700}
+.good{color:var(--ok)} .meh{color:#e69a00} .bad{color:var(--bad)}
+.tries{font-size:24px;letter-spacing:4px}
+.note{background:#fff3cd;border-radius:16px;padding:10px 14px;font-weight:700;font-size:16px;margin:10px 0;text-align:left}
+.end .em{font-size:100px}
+.end .stars{font-size:48px;letter-spacing:6px;margin:8px 0}
+.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.badge{background:#fff;border-radius:14px;padding:6px 10px;box-shadow:var(--shadow);font-weight:800;font-size:15px}
+.badge.lock{opacity:.35;filter:grayscale(1)}
+.settings{background:#fff;border-radius:22px;box-shadow:var(--shadow);padding:14px 16px;margin-top:24px}
+.settings label{display:block;font-weight:800;margin:8px 0 4px}
+.settings select{font:inherit;font-size:16px;padding:6px 10px;border-radius:12px;border:2px solid #e3dbe9;width:100%;max-width:420px;background:#fff;color:var(--ink)}
+canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:9}
+@media (max-width:480px){
+  .opt{font-size:52px}
+  .btn{font-size:18px;padding:10px 16px}
+  .mic{width:96px;height:96px;font-size:44px}
+}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div id="app"></div>
+
+<script>
+/* ========== 資料：國小四年級程度（對應 108 課綱常見單字與句型） ==========
+   每個主題：q(w) = Ollie 問的問題、a(w) = 標準回答、z(w) = 回答的中文
+   每個單字：en 英文、zh 中文、em 圖示（純數字會顯示成大字），可選 pl(複數)、he/she、p(片語)、t(專屬發音提示) */
+const TOPICS = {
+  animals:{name:'動物',en:'Animals',icon:'🐯',
+    q:()=>"What's this?", a:w=>`It's ${art(w.en)} ${w.en}.`, z:w=>`這是一隻${w.zh}。`,
+    words:[['cat','貓','🐱'],['dog','狗','🐶'],['bird','鳥','🐦'],['rabbit','兔子','🐰'],['elephant','大象','🐘'],
+           ['monkey','猴子','🐵'],['tiger','老虎','🐯'],['lion','獅子','🦁'],['bear','熊','🐻'],['zebra','斑馬','🦓']]},
+  food:{name:'食物',en:'Food',icon:'🍔',
+    q:()=>'What do you want?', a:w=>`I want ${w.p||w.en}.`, z:w=>`我想要${w.zh}。`,
+    words:[['hamburger','漢堡','🍔',{p:'a hamburger'}],['pizza','披薩','🍕'],['noodles','麵','🍜'],['rice','飯','🍚'],
+           ['sandwich','三明治','🥪',{p:'a sandwich'}],['egg','蛋','🥚',{p:'an egg'}],['cake','蛋糕','🍰',{p:'some cake'}],
+           ['ice cream','冰淇淋','🍦'],['milk','牛奶','🥛',{p:'some milk'}],['water','水','💧',{p:'some water',t:'美式發音：water 中間的 t 會變成輕輕的 d，聽起來像「wa-der」，最後的 -er 要捲舌。'}]]},
+  colors:{name:'顏色',en:'Colors',icon:'🌈',
+    q:()=>'What color is it?', a:w=>`It's ${w.en}.`, z:w=>`它是${w.zh}。`,
+    words:[['red','紅色','🍎'],['blue','藍色','🐳'],['green','綠色','🥦'],['yellow','黃色','🍌'],['orange','橘色','🥕'],
+           ['purple','紫色','🍇'],['pink','粉紅色','🌸'],['black','黑色','🎩'],['white','白色','🥚'],['brown','咖啡色','🐻']]},
+  numbers:{name:'數字 11–20',en:'Numbers',icon:'🔢',
+    q:()=>'What number is it?', a:w=>`It's ${w.en}.`, z:w=>`是${w.zh}。`,
+    words:[['eleven','十一','11'],['twelve','十二','12'],['thirteen','十三','13'],['fourteen','十四','14'],['fifteen','十五','15'],
+           ['sixteen','十六','16'],['seventeen','十七','17'],['eighteen','十八','18'],['nineteen','十九','19'],['twenty','二十','20',{t:'美式口語 twenty 常唸成「twen-ny」，t 幾乎不發音，兩種唸法都可以。'}]]},
+  weather:{name:'天氣',en:'Weather',icon:'⛅',
+    q:()=>"How's the weather?", a:w=>`It's ${w.en}.`, z:w=>`天氣${w.zh}。`,
+    words:[['sunny','晴朗','☀️'],['cloudy','多雲','☁️'],['rainy','下雨','🌧️'],['windy','颳風','🌬️'],['snowy','下雪','❄️'],
+           ['hot','很熱','🥵'],['cold','很冷','🥶'],['warm','溫暖','🌤️'],['cool','涼爽','🍃']]},
+  family:{name:'家人',en:'Family',icon:'👨‍👩‍👧',
+    q:w=>`Who is ${w.she?'she':'he'}?`, a:w=>`${w.she?"She's":"He's"} my ${w.en}.`, z:w=>`${w.she?'她':'他'}是我的${w.zh}。`,
+    words:[['father','爸爸','👨'],['mother','媽媽','👩',{she:1}],['brother','哥哥／弟弟','👦'],['sister','姊姊／妹妹','👧',{she:1}],
+           ['grandfather','爺爺／外公','👴'],['grandmother','奶奶／外婆','👵',{she:1}],['uncle','叔叔／舅舅','🧔'],
+           ['aunt','阿姨／姑姑','👩‍🦰',{she:1,t:'美式 aunt 唸成跟 ant（螞蟻）一樣的音 /ænt/，嘴巴張大。'}]]},
+  clothes:{name:'衣服',en:'Clothes',icon:'👕',
+    q:w=>w.pl?'What are these?':"What's this?", a:w=>w.pl?`They're ${w.en}.`:`It's ${art(w.en)} ${w.en}.`, z:w=>`${w.pl?'這些是':'這是'}${w.zh}。`,
+    words:[['T-shirt','T恤','👕'],['dress','洋裝','👗'],['coat','外套','🧥'],['hat','帽子','👒'],['cap','棒球帽','🧢'],
+           ['pants','褲子','👖',{pl:1}],['shoes','鞋子','👟',{pl:1}],['socks','襪子','🧦',{pl:1}],['gloves','手套','🧤',{pl:1}],['scarf','圍巾','🧣']]},
+  actions:{name:'動作',en:'Actions',icon:'🏃',
+    q:()=>'What can you do?', a:w=>`I can ${w.en}.`, z:w=>`我會${w.zh}。`,
+    words:[['run','跑步','🏃'],['swim','游泳','🏊'],['sing','唱歌','🎤'],['dance','跳舞','💃',{t:'美式 dance 的 a 唸 /æ/（嘴巴張大、嘴角往兩邊拉），不是英式的「ㄉㄚˋ-ns」。'}],
+           ['read','閱讀','📖'],['write','寫字','✍️'],['draw','畫畫','🎨'],['cook','煮飯','🍳'],
+           ['ride a bike','騎腳踏車','🚴'],['play basketball','打籃球','🏀']]},
+  feelings:{name:'心情',en:'Feelings',icon:'😊',
+    q:()=>'How are you?', a:w=>`I'm ${w.en}.`, z:w=>`我很${w.zh}。`,
+    words:[['happy','開心','😄'],['sad','難過','😢'],['angry','生氣','😠'],['tired','累','😩'],['hungry','餓','🤤'],
+           ['thirsty','口渴','🥤'],['scared','害怕','😱'],['sleepy','想睡','😴'],['fine','很好','🙂']]},
+};
+// 語音辨識常把數字或同音字聽成別的寫法 → 視為正確
+const ALIAS = {
+  eleven:['11'],twelve:['12'],thirteen:['13'],fourteen:['14'],fifteen:['15'],sixteen:['16'],seventeen:['17'],
+  eighteen:['18'],nineteen:['19'],twenty:['20','twenny'],
+  red:['read'],blue:['blew'],pink:['pinky'],cat:['kat'],bear:['bare'],
+  read:['red','reed'],write:['right','rite'],cook:['cooke'],sing:['sink'],
+  sunny:['sonny'],hot:['hut'],cool:['cul'],warm:['worm'],cold:['code'],
+  hat:['had'],cap:['cup'],scarf:['scarves'],
+  aunt:['ant','aren\'t'],fine:['find'],sad:['said'],tired:['tire'],
+  a:['an','uh'],an:['a','and'],
+};
+const MODES = [
+  {id:'learn',icon:'📚',name:'學單字',desc:'看圖、聽美式發音、學發音小撇步'},
+  {id:'listen',icon:'👂',name:'聽聽看',desc:'聽英文，選出正確的圖'},
+  {id:'speak',icon:'🎤',name:'說說看',desc:'看圖說出英文單字'},
+  {id:'sentence',icon:'💬',name:'句子跟讀',desc:'聽完跟著說出完整句子'},
+  {id:'dialog',icon:'🗣️',name:'問答對話',desc:'Ollie 問你，你用英文回答！'},
+];
+const BADGES = [[10,'🥉 銅牌小勇士'],[30,'🥈 銀牌小勇士'],[60,'🥇 金牌小勇士'],[100,'🏆 英語冠軍'],[200,'👑 英語國王']];
+const PRAISE = ['Great job!','Excellent!','Awesome!','Well done!','Super!','You did it!','Perfect!','Nice work!'];
+const ROUND = 8;
+
+function art(w){return /^[aeiou]/i.test(w)?'an':'a'}
+// 把資料轉成物件
+for(const t of Object.values(TOPICS)) t.words=t.words.map(([en,zh,em,x])=>({en,zh,em,...(x||{})}));
+
+const $ = s=>document.querySelector(s);
+const app = $('#app');
+const shuffle = a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick = a=>a[Math.random()*a.length|0];
+const emo = em=>/^\d+$/.test(em)?`<span class="num">${em}</span>`:em;
+
+/* ========== 台灣學生常見發音問題：小撇步 ========== */
+const SHORT_A = new Set(['cat','rabbit','elephant','hamburger','sandwich','black','happy','sad','angry','hat','cap','pants','dance','aunt','basketball','ant']);
+function tipsFor(w){
+  const s=w.en.toLowerCase(), out=[];
+  if(w.t) out.push(w.t);
+  if(/th/.test(s)) out.push('<b>th</b>：舌尖輕輕放在上下牙齒中間吹氣，不是「ㄙ」也不是「ㄈ」。');
+  if(/v/.test(s)) out.push('<b>v</b>：上排牙齒輕咬下嘴唇再出聲，不是「ㄅ」也不是「ㄨ」。');
+  if(/teen$/.test(s)) out.push('<b>-teen</b>：重音在後面，要拉長 → fif-<b>TEEN</b>；和 <b>FIF</b>-ty（50）不一樣喔！');
+  if(/(er|ir|ur|ar|or)(s|y|d)?$|(ir|ur|er)[^aeiou]/.test(s) && !w.t) out.push('<b>-er / -ir / -ur / -ar</b>：美式英語要把舌頭往後捲，帶一點「ㄦ」的聲音。');
+  if(/^r|\br/.test(s)) out.push('<b>r</b> 開頭：嘴巴先嘟起來，舌頭不要碰到上面，不是「ㄖ」也不是「ㄌ」。');
+  if(s.split(' ').some(x=>SHORT_A.has(x)) && !w.t) out.push('<b>a /æ/</b>：嘴巴張大、嘴角往兩邊拉，介於「ㄝ」和「ㄚ」之間。');
+  if(/ng$/.test(s)) out.push('字尾的 <b>ng</b> 是鼻音，像「ㄥ」收尾，g 不用另外發出來。');
+  else if(/[bdgkpt]$/.test(s)) out.push(`字尾的 <b>${s.slice(-1)}</b> 輕輕收音就好，不要多加「ㄜ」（例如 ${s.split(' ').pop()} 不是 ${s.split(' ').pop()}-ㄜ）。`);
+  if(/[^s]s$/.test(s)) out.push('字尾的 <b>s</b> 一定要發出來，表示「很多個」。');
+  if(/l$/.test(s)) out.push('字尾的 <b>l</b>：舌尖頂住上排牙齒後面，聽起來像輕輕的「ㄡ」。');
+  return out.slice(0,2);
+}
+const tipsHTML = w=>{const t=tipsFor(w); return t.length?`<div class="tips">💡 發音小撇步<br>${t.map(x=>'・'+x).join('<br>')}</div>`:''};
+
+/* ========== 存檔 ========== */
+function load(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}
+function save(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+let totalStars = +load('eh_stars',0)||0;
+function addStars(n){ totalStars+=n; save('eh_stars',totalStars); const s=$('#starCount'); if(s) s.textContent=totalStars; }
+
+/* ========== 美式發音（TTS） ========== */
+let voice=null, voiceName=load('eh_voice',''), rate=+load('eh_rate',0.85)||0.85;
+// 優先選清楚的美式語音（Edge 的 Natural 語音最自然）
+const PREFER=[/Aria.*Natural|Jenny.*Natural|Ana.*Natural|Guy.*Natural/i,/Google US English/i,/Samantha/i,/Aria|Jenny|Ana|Zira/i,/Microsoft.*United States/i];
+function usVoices(){ return ('speechSynthesis' in window)?speechSynthesis.getVoices().filter(v=>/^en[-_]US/i.test(v.lang)):[] }
+function loadVoice(){
+  const vs=usVoices();
+  voice = vs.find(v=>v.name===voiceName) || PREFER.map(r=>vs.find(v=>r.test(v.name))).find(Boolean) || vs[0] || null;
+  const sel=$('#voiceSel'); if(sel) fillVoices();
+}
+if('speechSynthesis' in window){ loadVoice(); speechSynthesis.onvoiceschanged = loadVoice; }
+function speak(text,r){
+  return new Promise(res=>{
+    if(!('speechSynthesis' in window)) return res();
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang='en-US'; if(voice) u.voice=voice; u.rate=r||rate; u.pitch=1.05;
+    u.onend=res; u.onerror=res;
+    speechSynthesis.speak(u);
+    setTimeout(res, 8000);
+  });
+}
+const SLOW=()=>Math.max(.5,rate-.3);
+
+/* ========== 音效 ========== */
+let actx=null;
+function tone(freqs,dur=.12,type='sine',vol=.18){
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    let t = actx.currentTime;
+    freqs.forEach(f=>{
+      const o=actx.createOscillator(), g=actx.createGain();
+      o.type=type; o.frequency.value=f; g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.001,t+dur);
+      o.connect(g).connect(actx.destination); o.start(t); o.stop(t+dur); t+=dur*.9;
+    });
+  }catch(e){}
+}
+const sfx = {
+  ok:()=>tone([660,880,1320],.13,'triangle'),
+  bad:()=>tone([220,180],.18,'square',.08),
+  click:()=>tone([520],.05,'triangle',.1),
+  win:()=>tone([523,659,784,1047,784,1047],.14,'triangle'),
+};
+
+/* ========== 彩帶 ========== */
+const fx=$('#fx'), fctx=fx.getContext('2d'); let parts=[];
+function resize(){fx.width=innerWidth;fx.height=innerHeight} addEventListener('resize',resize); resize();
+function confetti(n=120){
+  const cols=['#ff7a59','#ffc93c','#2fbf71','#4aa8ff','#9b6bff','#ff6fb5'];
+  const start=!parts.length;
+  for(let i=0;i<n;i++) parts.push({x:innerWidth/2,y:innerHeight*.4,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,r:Math.random()*6+4,c:pick(cols),a:Math.random()*6,life:120});
+  if(start) requestAnimationFrame(loop);
+}
+function loop(){
+  fctx.clearRect(0,0,fx.width,fx.height);
+  parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.35;p.vx*=.99;p.a+=.2;p.life--;
+    fctx.save();fctx.translate(p.x,p.y);fctx.rotate(p.a);fctx.fillStyle=p.c;fctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6);fctx.restore();});
+  parts=parts.filter(p=>p.life>0&&p.y<fx.height+20);
+  if(parts.length) requestAnimationFrame(loop); else fctx.clearRect(0,0,fx.width,fx.height);
+}
+
+/* ========== 語音辨識（美式英語 en-US） ========== */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec=null, listening=false;
+function listen(){
+  return new Promise((resolve)=>{
+    if(!SR) return resolve({error:'unsupported'});
+    'speechSynthesis' in window && speechSynthesis.cancel();
+    rec = new SR(); rec.lang='en-US'; rec.interimResults=false; rec.maxAlternatives=5; rec.continuous=false;
+    let done=false; const finish=r=>{ if(done) return; done=true; listening=false; resolve(r); };
+    rec.onresult = e=>{ const alts=[]; for(const r of e.results) for(const a of r) alts.push(a.transcript); finish({alts}); };
+    rec.onerror = e=>finish({error:e.error});
+    rec.onend = ()=>finish({alts:[]});
+    try{ rec.start(); listening=true; }catch(err){ finish({error:'busy'}); }
+    setTimeout(()=>{ try{rec.stop()}catch(e){} }, 8000);
+  });
+}
+const CONTR = {"it's":'it is',"i'm":'i am',"he's":'he is',"she's":'she is',"they're":'they are',"what's":'what is',"how's":'how is',"don't":'do not',"can't":'can not',"cannot":'can not'};
+function norm(s){
+  s=s.toLowerCase().replace(/[’‘]/g,"'").replace(/-/g,' ').replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').trim();
+  return s.split(' ').map(x=>CONTR[x]||x.replace(/'/g,'')).join(' ');
+}
+function lev(a,b){
+  const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
+  let prev=Array.from({length:n+1},(_,i)=>i);
+  for(let i=1;i<=m;i++){ const cur=[i]; for(let j=1;j<=n;j++) cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1)); prev=cur; }
+  return prev[n];
+}
+const sim=(a,b)=>1-lev(a,b)/Math.max(a.length,b.length,1);
+function matchWord(target,alts){
+  const t=norm(target), accepted=[t,...(ALIAS[t]||[]), t+'s'];
+  let best=0, heard=alts[0]||'';
+  for(const a of alts){ const n=norm(a); for(const w of [n,...n.split(' ')]) for(const acc of accepted){ const s=sim(w,acc); if(s>best){best=s;heard=a} } }
+  return {score:best,heard};
+}
+// 逐字比對；回傳每個原始字（如 It's）是否說到
+function matchSentence(target,alts,key){
+  const toks=target.split(' ');
+  let best={score:-1,hits:[],heard:alts[0]||''};
+  for(const a of alts){
+    const hw=norm(a).split(' ');
+    const has=w=>{const acc=[w,...(ALIAS[w]||[])]; return hw.some(h=>acc.some(x=>sim(h,x)>=.75))};
+    const hits=toks.map(tok=>norm(tok).split(' ').filter(Boolean).every(has));
+    let sc=hits.filter(Boolean).length/toks.length;
+    if(key && !norm(key).split(' ').every(has)) sc=Math.min(sc,.6);   // 關鍵字沒說到就不算過關
+    if(sc>best.score) best={score:sc,hits,heard:a};
+  }
+  return best;
+}
+const ERR_MSG = {
+  'not-allowed':'🎙️ 麥克風被封鎖了，請在網址列允許使用麥克風喔！',
+  'service-not-allowed':'🎙️ 麥克風被封鎖了，請在網址列允許使用麥克風喔！',
+  'no-speech':'🤔 我沒聽到聲音，按下按鈕後大聲說喔！',
+  'audio-capture':'🎙️ 找不到麥克風，請檢查是否有接上。',
+  'network':'📶 語音辨識需要網路，請檢查網路連線。',
+  'unsupported':'這個瀏覽器不支援語音辨識，請用 Chrome 或 Edge 開啟。',
+};
+
+/* ========== 畫面 ========== */
+function header(){
+  return `<header class="top">
+    <div class="logo">🦸 English Hero<small>英語小勇士・國小四年級</small></div>
+    <div class="starbox">⭐ <span id="starCount">${totalStars}</span></div>
+  </header>`;
+}
+function mascot(en,zh){ return `<div class="mascot"><div class="face">🦉</div><div class="bubble">${en}<br><span style="color:var(--muted);font-size:15px">${zh}</span></div></div>`; }
+
+function fillVoices(){
+  const sel=$('#voiceSel'); if(!sel) return;
+  const vs=usVoices();
+  sel.innerHTML = vs.length ? vs.map(v=>`<option ${voice&&v.name===voice.name?'selected':''}>${v.name}</option>`).join('')
+                            : '<option>（找不到美式語音，將使用系統預設）</option>';
+}
+function home(){
+  state={};
+  const earned=BADGES.map(([n,b])=>`<span class="badge ${totalStars>=n?'':'lock'}">${b}</span>`).join('');
+  app.innerHTML = header() + mascot("Hi! I'm Ollie. Let's learn English!","嗨！我是貓頭鷹 Ollie，一起來學美式英語吧！") +
+    `<h2>① 選一個主題</h2><div class="grid">${Object.entries(TOPICS).map(([k,t])=>
+      `<div class="tile" data-t="${k}"><div class="em">${t.icon}</div><div class="t1">${t.en}</div><div class="t2">${t.name}</div></div>`).join('')}</div>
+     <h2 style="margin-top:24px">🏅 我的徽章</h2><div class="badges">${earned}</div>
+     <div class="settings"><b>🔊 發音設定（美式英語）</b>
+       <label for="voiceSel">聲音</label><select id="voiceSel"></select>
+       <label for="rateSel">速度</label>
+       <select id="rateSel"><option value="0.7">🐢 慢一點</option><option value="0.85">🙂 剛剛好</option><option value="1">🐇 正常速度</option></select>
+       <div class="row" style="justify-content:flex-start"><button class="btn sky small" id="test">▶ 試聽</button></div>
+       <div style="color:var(--muted);font-size:14px;font-weight:700;margin-top:8px">建議用 Edge 瀏覽器，選「Microsoft Aria / Jenny (Natural)」最自然。</div>
+     </div>
+     ${SR?'':`<div class="note">⚠️ ${ERR_MSG.unsupported}（其他遊戲仍然可以玩！）</div>`}`;
+  app.querySelectorAll('[data-t]').forEach(el=>el.onclick=()=>{sfx.click(); chooseMode(el.dataset.t)});
+  fillVoices();
+  $('#rateSel').value=String(rate);
+  $('#voiceSel').onchange=e=>{voiceName=e.target.value; save('eh_voice',voiceName); loadVoice(); speak('Hello!')};
+  $('#rateSel').onchange=e=>{rate=+e.target.value; save('eh_rate',rate); speak('Hello! How are you?')};
+  $('#test').onclick=()=>speak("Hi! I'm Ollie. How are you today?");
+}
+
+function chooseMode(topic){
+  const t=TOPICS[topic];
+  app.innerHTML = header() + mascot(`${t.en}! Good choice!`,`你選了「${t.name}」，要玩什麼呢？`) +
+    `<h2>② 選一個遊戲</h2><div class="grid modes">${MODES.map(m=>
+      `<div class="tile" data-m="${m.id}"><div class="em">${m.icon}</div><div><div class="t1">${m.name}</div><div class="t2">${m.desc}</div></div></div>`).join('')}</div>
+     <div class="row"><button class="btn ghost" id="back">⬅ 換主題</button></div>`;
+  app.querySelectorAll('[data-m]').forEach(el=>el.onclick=()=>{sfx.click(); start(topic,el.dataset.m)});
+  $('#back').onclick=home;
+}
+
+let state={};
+function start(topic,mode){
+  const words=TOPICS[topic].words;
+  state={topic,mode,words,queue:mode==='learn'?words:shuffle(words).slice(0,ROUND),idx:0,stars:0,tries:0};
+  render();
+}
+
+function topBar(){
+  const pct = state.idx/state.queue.length*100;
+  const m=MODES.find(m=>m.id===state.mode);
+  return header()+`<div class="bar"><button class="btn ghost small" id="quit">✖</button>
+    <div class="progress"><i style="width:${pct}%"></i></div>
+    <b>${m.icon} ${Math.min(state.idx+1,state.queue.length)}/${state.queue.length}</b></div>`;
+}
+function bindTop(){ $('#quit').onclick=()=>{ try{rec&&rec.abort()}catch(e){}; chooseMode(state.topic) }; }
+
+function render(){
+  if(state.idx>=state.queue.length) return finish();
+  ({learn:renderLearn,listen:renderListen,speak:renderSpeak,sentence:renderSentence,dialog:renderDialog})[state.mode]();
+}
+function next(){ state.idx++; state.tries=0; render(); }
+const T=()=>TOPICS[state.topic];
+
+/* --- 學單字 --- */
+function renderLearn(){
+  const w=state.queue[state.idx], t=T();
+  app.innerHTML = topBar() + `<div class="stage">
+    <div class="big-em" id="em">${emo(w.em)}</div>
+    <div class="word">${w.en}</div><div class="zh">${w.zh}</div>
+    <div class="row">
+      <button class="btn sky" id="play">🔊 聽發音</button>
+      <button class="btn ghost" id="slow">🐢 慢慢唸</button>
+    </div>
+    <div class="qa" id="qa" title="點一下聽對話">
+      <div class="q">🦉 ${t.q(w)}</div><div>🧒 ${t.a(w)}</div>
+      <div style="color:var(--muted);font-size:15px">${t.z(w)}　🔊 點我聽</div>
+    </div>
+    ${tipsHTML(w)}
+    <div style="margin-top:18px">${SR?`<button class="mic" id="mic">🎤</button><div class="miclabel" id="ml">試著跟著唸唸看！</div>`:''}</div>
+    <div class="feedback" id="fb"></div>
+    <div class="row">
+      <button class="btn ghost" id="prev" ${state.idx===0?'disabled':''}>⬅ 上一個</button>
+      <button class="btn" id="nxt">${state.idx===state.queue.length-1?'完成 🎉':'下一個 ➡'}</button>
+    </div></div>`;
+  bindTop();
+  const say=()=>{ const e=$('#em'); e.classList.remove('pop'); void e.offsetWidth; e.classList.add('pop'); speak(w.en); };
+  $('#em').onclick=say; $('#play').onclick=say; $('#slow').onclick=()=>speak(w.en,SLOW());
+  $('#qa').onclick=async()=>{ await speak(t.q(w)); await speak(t.a(w)); };
+  $('#prev').onclick=()=>{state.idx--;render()};
+  $('#nxt').onclick=next;
+  if(SR) $('#mic').onclick=()=>doSpeak(w,'word',null);
+  setTimeout(say,300);
+}
+
+/* --- 聽聽看 --- */
+function renderListen(){
+  const w=state.queue[state.idx];
+  const opts=shuffle([w,...shuffle(state.words.filter(x=>x.en!==w.en)).slice(0,3)]);
+  app.innerHTML = topBar() + `<div class="stage">
+    <div class="zh">聽聽看，是哪一個？</div>
+    <div class="row" style="margin-top:8px"><button class="btn sky" id="play">🔊 再聽一次</button><button class="btn ghost" id="slow">🐢 慢慢唸</button></div>
+    <div class="opts">${opts.map(o=>`<div class="opt" data-w="${o.en}">${emo(o.em)}</div>`).join('')}</div>
+    <div class="feedback" id="fb"></div></div>`;
+  bindTop();
+  $('#play').onclick=()=>speak(w.en); $('#slow').onclick=()=>speak(w.en,SLOW());
+  let locked=false;
+  app.querySelectorAll('.opt').forEach(el=>el.onclick=async()=>{
+    if(locked) return;
+    if(el.dataset.w===w.en){
+      locked=true; el.classList.add('right'); sfx.ok();
+      const got = state.tries===0?1:0; state.stars+=got;
+      $('#fb').innerHTML=`<span class="good">✅ ${w.en} — ${w.zh}！${got?'+⭐':''}</span>`;
+      await speak(`${w.en}! ${pick(PRAISE)}`);
+      setTimeout(next,400);
+    }else{
+      state.tries++; el.classList.add('wrong'); sfx.bad();
+      const o=state.words.find(x=>x.en===el.dataset.w);
+      $('#fb').innerHTML=`<span class="bad">❌ 那是 ${o.en}（${o.zh}），再聽一次！</span>`;
+      setTimeout(()=>speak(w.en),700);
+    }
+  });
+  setTimeout(()=>speak(w.en),300);
+}
+
+/* --- 說說看 --- */
+function renderSpeak(){
+  const w=state.queue[state.idx];
+  state.peek=false;
+  app.innerHTML = topBar() + `<div class="stage">
+    <div class="big-em" id="em">${emo(w.em)}</div>
+    <div class="zh">「${w.zh}」的英文怎麼說？</div>
+    <div class="word" id="ans" style="visibility:hidden">${w.en}</div>
+    <div class="tries" id="tries">💚💚💚</div>
+    <div style="margin-top:8px"><button class="mic" id="mic">🎤</button><div class="miclabel" id="ml">按一下，說出英文！</div></div>
+    <div class="feedback" id="fb">${SR?'':`<div class="note">${ERR_MSG.unsupported}</div>`}</div>
+    <div id="tipbox"></div>
+    <div class="row">
+      <button class="btn ghost small" id="hint">💡 提示（字首）</button>
+      <button class="btn ghost small" id="listen">🔊 聽答案</button>
+      <button class="btn ghost small" id="skip">跳過 ➡</button>
+    </div></div>`;
+  bindTop();
+  const show=txt=>{ $('#ans').style.visibility='visible'; $('#ans').textContent=txt; };
+  $('#hint').onclick=()=>show(w.en.replace(/\B[a-z]/gi,' _'));
+  $('#listen').onclick=()=>{ show(w.en); state.peek=true; speak(w.en); };
+  $('#skip').onclick=next;
+  $('#mic').onclick=()=>doSpeak(w,'word',ok=>{
+    if(ok){ const s=state.peek?1:[3,2,1][Math.min(state.tries,2)]; state.stars+=s; show(w.en);
+      $('#fb').insertAdjacentHTML('beforeend',`<div class="good">+${'⭐'.repeat(s)}</div>`); setTimeout(next,1600); }
+    else { state.tries++; $('#tries').textContent='💚'.repeat(Math.max(0,3-state.tries))+'🤍'.repeat(Math.min(3,state.tries));
+      $('#tipbox').innerHTML=tipsHTML(w);
+      if(state.tries>=3){ show(w.en); state.peek=true;
+        $('#fb').insertAdjacentHTML('beforeend',`<div class="meh">答案是 <b>${w.en}</b>，聽一次再試試看！</div>`); speak(w.en); } }
+  });
+}
+
+/* --- 句子跟讀 --- */
+function renderSentence(){
+  const w=state.queue[state.idx], t=T();
+  const sent=t.a(w);
+  app.innerHTML = topBar() + `<div class="stage">
+    <div class="big-em" id="em" style="font-size:90px">${emo(w.em)}</div>
+    <div class="sentence" id="sent">${sent.split(' ').map(x=>`<span>${x}</span>`).join(' ')}</div>
+    <div class="zh">${t.z(w)}</div>
+    <div class="row"><button class="btn sky" id="play">🔊 聽句子</button><button class="btn ghost" id="slow">🐢 慢慢唸</button></div>
+    <div style="margin-top:18px"><button class="mic" id="mic">🎤</button><div class="miclabel" id="ml">聽完後，按一下跟著說！</div></div>
+    <div class="feedback" id="fb">${SR?'':`<div class="note">${ERR_MSG.unsupported}</div>`}</div>
+    <div id="tipbox"></div>
+    <div class="row"><button class="btn ghost small" id="skip">下一句 ➡</button></div></div>`;
+  bindTop();
+  $('#play').onclick=()=>speak(sent); $('#slow').onclick=()=>speak(sent,SLOW());
+  $('#em').onclick=()=>speak(w.en);
+  $('#skip').onclick=next;
+  $('#mic').onclick=()=>doSpeak(w,'sentence',ok=>{
+    if(ok){ const s=[3,2,1][Math.min(state.tries,2)]; state.stars+=s;
+      $('#fb').insertAdjacentHTML('beforeend',`<div class="good">+${'⭐'.repeat(s)}</div>`); setTimeout(next,1800); }
+    else { state.tries++; $('#tipbox').innerHTML=tipsHTML(w); }
+  }, sent);
+  setTimeout(()=>speak(sent),300);
+}
+
+/* --- 問答對話：Ollie 問、小朋友回答 --- */
+function renderDialog(){
+  const w=state.queue[state.idx], t=T();
+  const q=t.q(w), ans=t.a(w);
+  const keyWords=(w.p||w.en).split(' ');
+  // 句型提示：把關鍵字換成 ____
+  const pattern=ans.replace(w.en,'____');
+  app.innerHTML = topBar() + mascot(`🔊 ${q}`,'Ollie 問你：用完整的英文句子回答！') + `<div class="stage">
+    <div class="big-em" id="em">${emo(w.em)}</div>
+    <div class="sentence" id="sent" style="visibility:hidden">${ans.split(' ').map(x=>`<span>${x}</span>`).join(' ')}</div>
+    <div class="zh" id="pat">句型提示：<b style="color:var(--ink)">${pattern}</b></div>
+    <div class="row"><button class="btn sky" id="ask">🔊 再問一次</button><button class="btn ghost" id="peek">👀 看答案</button></div>
+    <div style="margin-top:18px"><button class="mic" id="mic">🎤</button><div class="miclabel" id="ml">按一下，回答 Ollie！</div></div>
+    <div class="feedback" id="fb">${SR?'':`<div class="note">${ERR_MSG.unsupported}</div>`}</div>
+    <div id="tipbox"></div>
+    <div class="row"><button class="btn ghost small" id="skip">下一題 ➡</button></div></div>`;
+  bindTop();
+  state.peek=false;
+  const reveal=()=>{ $('#sent').style.visibility='visible'; $('#pat').innerHTML=t.z(w); };
+  $('#ask').onclick=()=>speak(q);
+  $('.bubble').style.cursor='pointer'; $('.bubble').onclick=()=>speak(q);
+  $('#peek').onclick=async()=>{ reveal(); state.peek=true; await speak(ans); };
+  $('#skip').onclick=next;
+  $('#mic').onclick=()=>doSpeak(w,'sentence',async ok=>{
+    reveal();
+    if(ok){ const s=state.peek?1:[3,2,1][Math.min(state.tries,2)]; state.stars+=s;
+      $('#fb').insertAdjacentHTML('beforeend',`<div class="good">+${'⭐'.repeat(s)}</div>`); setTimeout(next,2200); }
+    else { state.tries++; $('#tipbox').innerHTML=tipsHTML(w);
+      if(state.tries>=2){ state.peek=true; $('#fb').insertAdjacentHTML('beforeend',`<div class="meh">聽 Ollie 示範一次，再回答看看！</div>`); await speak(ans); } }
+  }, ans, keyWords.join(' '));
+  setTimeout(()=>speak(q),400);
+}
+
+/* --- 共用：錄音 + 評分 --- */
+async function doSpeak(w,kind,cb,sentence,key){
+  const mic=$('#mic'), fb=$('#fb'), ml=$('#ml');
+  if(listening){ try{rec.stop()}catch(e){}; return; }
+  mic.classList.add('on'); if(ml) ml.textContent='我在聽…請說英文！';
+  fb.innerHTML='';
+  const r = await listen();
+  if(!document.body.contains(mic)) return;
+  mic.classList.remove('on'); if(ml) ml.textContent='再按一次可以重說';
+  if(r.error){ if(r.error!=='aborted') fb.innerHTML=`<span class="meh">${ERR_MSG[r.error]||'出了點問題，再試一次！（'+r.error+'）'}</span>`; return; }
+  if(!r.alts.length){ fb.innerHTML=`<span class="meh">${ERR_MSG['no-speech']}</span>`; return; }
+
+  if(kind==='word'){
+    const {score,heard}=matchWord(w.en,r.alts);
+    if(score>=.75){ sfx.ok(); confetti(60); fb.innerHTML=`<span class="good">🎉 ${pick(PRAISE)} 說得很好！</span><span class="heard">我聽到：「${heard}」</span>`; speak(pick(PRAISE)); cb&&cb(true); }
+    else if(score>=.5){ sfx.bad(); fb.innerHTML=`<span class="meh">👍 很接近了！看看下面的小撇步再試一次</span><span class="heard">我聽到：「${heard}」</span>`; cb&&cb(false); }
+    else { sfx.bad(); fb.innerHTML=`<span class="bad">🙈 不太對喔，聽聽看再說一次</span><span class="heard">我聽到：「${heard}」</span>`; cb&&cb(false); }
+  }else{
+    const {score,hits,heard}=matchSentence(sentence,r.alts,key);
+    const spans=$('#sent').querySelectorAll('span');
+    spans.forEach((s,i)=>{s.classList.remove('hit','miss'); s.classList.add(hits[i]?'hit':'miss')});
+    const pct=Math.round(score*100);
+    if(score>=.8){ sfx.ok(); confetti(80); fb.innerHTML=`<span class="good">🎉 ${pct} 分！${pick(PRAISE)}</span><span class="heard">我聽到：「${heard}」</span>`; speak(pick(PRAISE)); cb&&cb(true); }
+    else if(score>=.5){ sfx.bad(); fb.innerHTML=`<span class="meh">👍 ${pct} 分，紅色的字再練一下！</span><span class="heard">我聽到：「${heard}」</span>`; cb&&cb(false); }
+    else { sfx.bad(); fb.innerHTML=`<span class="bad">💪 ${pct} 分，先聽一次再跟著說！</span><span class="heard">我聽到：「${heard}」</span>`; cb&&cb(false); }
+  }
+}
+
+/* --- 結算 --- */
+function finish(){
+  let got=state.stars, max;
+  if(state.mode==='learn'){ got=2; max=2; }
+  else max = state.mode==='listen'? state.queue.length : state.queue.length*3;
+  const before=totalStars; addStars(got);
+  const ratio=got/max;
+  const show = ratio>=.8?'⭐⭐⭐':ratio>=.5?'⭐⭐':'⭐';
+  const newBadge = BADGES.find(([n])=>before<n && totalStars>=n);
+  sfx.win(); confetti(180);
+  speak(ratio>=.8?'Amazing! You are an English hero!':'Good job! Keep practicing!');
+  app.innerHTML = header() + `<div class="stage end">
+    <div class="em">${ratio>=.8?'🏆':ratio>=.5?'🥳':'💪'}</div>
+    <h2>${ratio>=.8?'太厲害了！':ratio>=.5?'做得很好！':'繼續加油！'}</h2>
+    <div class="stars">${show}</div>
+    <div style="font-size:22px;font-weight:800">這一關得到 ⭐ × ${got}</div>
+    ${newBadge?`<div class="note" style="text-align:center;font-size:20px">🎊 獲得新徽章：${newBadge[1]}！</div>`:''}
+    <div class="row">
+      <button class="btn" id="again">🔁 再玩一次</button>
+      <button class="btn sky" id="other">🎮 換遊戲</button>
+      <button class="btn ghost" id="home">🏠 回首頁</button>
+    </div></div>`;
+  $('#again').onclick=()=>start(state.topic,state.mode);
+  $('#other').onclick=()=>chooseMode(state.topic);
+  $('#home').onclick=home;
+}
+
+home();
+</script>
+</body>
+</html>
