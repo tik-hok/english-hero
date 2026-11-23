@@ -391,7 +391,10 @@ function topBar(){
 }
 function bindTop(){ $('#quit').onclick=()=>{ try{rec&&rec.abort()}catch(e){}; chooseMode(state.topic) }; }
 
+// 延遲動作只在同一個畫面還在時才執行（避免快速點「下一個」時跳兩題或唸錯字）
+function later(fn,ms){ const s=state, g=s.gen; setTimeout(()=>{ if(state===s && s.gen===g) fn() },ms) }
 function render(){
+  state.gen=(state.gen||0)+1;
   if(state.idx>=state.queue.length) return finish();
   ({learn:renderLearn,listen:renderListen,speak:renderSpeak,sentence:renderSentence,dialog:renderDialog})[state.mode]();
 }
@@ -426,7 +429,7 @@ function renderLearn(){
   $('#prev').onclick=()=>{state.idx--;render()};
   $('#nxt').onclick=next;
   if(SR) $('#mic').onclick=()=>doSpeak(w,'word',null);
-  setTimeout(say,300);
+  later(say,300);
 }
 
 /* --- 聽聽看 --- */
@@ -448,15 +451,15 @@ function renderListen(){
       const got = state.tries===0?1:0; state.stars+=got;
       $('#fb').innerHTML=`<span class="good">✅ ${w.en} — ${w.zh}！${got?'+⭐':''}</span>`;
       await speak(`${w.en}! ${pick(PRAISE)}`);
-      setTimeout(next,400);
+      later(next,400);
     }else{
       state.tries++; el.classList.add('wrong'); sfx.bad();
       const o=state.words.find(x=>x.en===el.dataset.w);
       $('#fb').innerHTML=`<span class="bad">❌ 那是 ${o.en}（${o.zh}），再聽一次！</span>`;
-      setTimeout(()=>speak(w.en),700);
+      later(()=>speak(w.en),700);
     }
   });
-  setTimeout(()=>speak(w.en),300);
+  later(()=>speak(w.en),300);
 }
 
 /* --- 說說看 --- */
@@ -483,7 +486,7 @@ function renderSpeak(){
   $('#skip').onclick=next;
   $('#mic').onclick=()=>doSpeak(w,'word',ok=>{
     if(ok){ const s=state.peek?1:[3,2,1][Math.min(state.tries,2)]; state.stars+=s; show(w.en);
-      $('#fb').insertAdjacentHTML('beforeend',`<div class="good">+${'⭐'.repeat(s)}</div>`); setTimeout(next,1600); }
+      $('#fb').insertAdjacentHTML('beforeend',`<div class="good">+${'⭐'.repeat(s)}</div>`); later(next,1600); }
     else { state.tries++; $('#tries').textContent='💚'.repeat(Math.max(0,3-state.tries))+'🤍'.repeat(Math.min(3,state.tries));
       $('#tipbox').innerHTML=tipsHTML(w);
       if(state.tries>=3){ show(w.en); state.peek=true;
@@ -510,10 +513,10 @@ function renderSentence(){
   $('#skip').onclick=next;
   $('#mic').onclick=()=>doSpeak(w,'sentence',ok=>{
     if(ok){ const s=[3,2,1][Math.min(state.tries,2)]; state.stars+=s;
-      $('#fb').insertAdjacentHTML('beforeend',`<div class="good">+${'⭐'.repeat(s)}</div>`); setTimeout(next,1800); }
+      $('#fb').insertAdjacentHTML('beforeend',`<div class="good">+${'⭐'.repeat(s)}</div>`); later(next,1800); }
     else { state.tries++; $('#tipbox').innerHTML=tipsHTML(w); }
   }, sent);
-  setTimeout(()=>speak(sent),300);
+  later(()=>speak(sent),300);
 }
 
 /* --- 問答對話：Ollie 問、小朋友回答 --- */
@@ -542,11 +545,11 @@ function renderDialog(){
   $('#mic').onclick=()=>doSpeak(w,'sentence',async ok=>{
     reveal();
     if(ok){ const s=state.peek?1:[3,2,1][Math.min(state.tries,2)]; state.stars+=s;
-      $('#fb').insertAdjacentHTML('beforeend',`<div class="good">+${'⭐'.repeat(s)}</div>`); setTimeout(next,2200); }
+      $('#fb').insertAdjacentHTML('beforeend',`<div class="good">+${'⭐'.repeat(s)}</div>`); later(next,2200); }
     else { state.tries++; $('#tipbox').innerHTML=tipsHTML(w);
       if(state.tries>=2){ state.peek=true; $('#fb').insertAdjacentHTML('beforeend',`<div class="meh">聽 Ollie 示範一次，再回答看看！</div>`); await speak(ans); } }
   }, ans, keyWords.join(' '));
-  setTimeout(()=>speak(q),400);
+  later(()=>speak(q),400);
 }
 
 /* --- 共用：錄音 + 評分 --- */
